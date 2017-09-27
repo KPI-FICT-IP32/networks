@@ -76,6 +76,7 @@ sed -i.bak 's/#PermitRootLogin no/PermitRootLogin yes/g' /mnt/etc/ssh/sshd_confi
 echo '#!/bin/sh' > /mnt/etc/rc.conf
 echo 'ifconfg_em0="DHCP"' >> /mnt/etc/rc.conf
 echo 'sshd_enable="YES"' >> /mnt/etc/rc.conf
+echo 'hostname="monica"' >> /mnt/etc/rc.conf
 
 # 5. Chroot and root password
 # ===========================
