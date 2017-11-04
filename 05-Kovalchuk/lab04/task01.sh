@@ -28,33 +28,28 @@ ping -c 5 -s 600 10.18.49.10
 pingroute()
 {
   dest="$1"
-  ttl=1
   msg="(Destination (host|net) unreachable|Time to live exceeded)"
-  while : ; do
+  for ttl in `seq 15`; do
     set +e
     ping_stats="$(ping -vvv -no -c 1 -m ${ttl} "${dest}")"
     is_fin=$?
     set -e
     if [ $is_fin -eq 0 ] ; then
         echo "${ttl}    ${dest}"
+        echo "DONE"
         break
     fi
 
-    error_msg="$(echo "${ping_stats}" | egrep -i "${msg}")"
-    is_done="" 
+    error_msg="$(echo "${ping_stats}" | egrep -i "${msg}")" || true
     case "$error_msg" in
       *"Time to live exceeded")
         addr=$(echo "${error_msg}" | awk '{print $4}' | sed -e 's/://g')
         echo "${ttl}    ${addr}"
-        is_done=""
         ;;
       *)
-        echo "${ttl}    ERROR ${error_msg}"
-        is_done="Done"
+        echo "${ttl}    *    ${error_msg}"
         ;;
     esac
-    ttl="$((ttl+1))"
-    [ -n "${is_done}" ] && break
   done
 }
 
@@ -63,8 +58,8 @@ pingroute 10.18.50.1
 
 
 # Normal traceroute
-traceroute -v 10.18.50.1
-traceroute -v -I 10.18.50.1
+traceroute 10.18.50.1
+traceroute -I 10.18.50.1
 
 # 6. Print statistics of TCP,UDP,ICMP,IP protocols
 # ================================================
