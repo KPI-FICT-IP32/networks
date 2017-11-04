@@ -9,9 +9,9 @@ ifconfig em0 add 192.168.5.1
 
 # 2. Change MAC address and working mode
 # ======================================
-ifconfig em0 lladdr 00:11:11:11:22:22 \
-             media 100baseTX \
-             mediaopt full-duplex
+ifconfig em0 lladdr 00:11:11:11:22:22
+ifconfig em0 media 100baseTX
+ifconfig em0 mediaopt full-duplex
 
 # 3. Change MTU
 # =============
