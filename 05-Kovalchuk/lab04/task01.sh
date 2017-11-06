@@ -64,7 +64,17 @@ traceroute -I 10.18.50.1
 # 6. Print statistics of TCP,UDP,ICMP,IP protocols
 # ================================================
 
-netstat -ni -p tcp -p udp -p icmp -p ip -h
+# Per-interface statistics
+netstat -ni -p tcp
+netstat -ni -p udp
+netstat -ni -p icmp
+netstat -ni -p ip
+
+# System-wide statistics
+netstat -s -p tcp 
+netstat -s -p udp 
+netstat -s -p icmp 
+netstat -s -p ip
 
 # 7. Find IP address by name
 # ==========================
