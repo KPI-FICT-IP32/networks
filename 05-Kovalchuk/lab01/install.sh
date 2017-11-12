@@ -94,3 +94,7 @@ reboot
 # ==========
 rm /base.txz
 rm /kernel.txz
+
+# 8. Set default shell to sh
+# ==========================
+chsh -s /bin/sh
