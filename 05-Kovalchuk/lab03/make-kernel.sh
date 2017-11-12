@@ -55,6 +55,7 @@ mount -t nullfs /root/usr/share/zoneinfo/ /usr/share/zoneinfo/
 # Man is too big. Remove all locales except en.UTF-8
 cd /usr/share/man/
 rm -rf ./en.ISO8859-1 ./en.ISO8859-15
+mkdir -p /tmp/usr/share/man
 cp -r /usr/share/man/ /tmp/usr/share/man/
 rm -rf /usr/share/man/*
 mount -t nullfs /tmp/usr/share/man/ /usr/share/man
@@ -185,7 +186,7 @@ device      md                          # Memory "disks"
 device      gif                         # IPv6 and IPv4 tunneling
 device      firmware                    # firmware assist module
 
-# The `bpf' device enables the Berkeley Packet Filter.
+# The 'bpf' device enables the Berkeley Packet Filter.
 # Be aware of the administrative consequences of enabling this!
 # Note that 'bpf' is required for DHCP.
 device      bpf                         # Berkeley packet filter
@@ -248,3 +249,8 @@ rm -rf /var/tmp/usr
 # ==========================
 
 reboot
+
+# Remove sources
+# ==============
+
+rm -rf /usr/src
