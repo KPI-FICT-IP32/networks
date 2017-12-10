@@ -26,7 +26,7 @@ gpart add -t freebsd-ufs -s 350M ada0s1
 glabel label tmp ada0s1e
 # /usr
 gpart add -t freebsd-ufs -s 2640M ada0s1
-glabel label usr ada0s1a
+glabel label usr ada0s1f
 
 # create filesystems
 newfs -U -L root /dev/label/root
