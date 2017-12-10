@@ -41,7 +41,7 @@ router rip
 version 2
 redistribute connected
 
-network vlan5
+network vlan6
 network vlan7
 network vlan303
 
@@ -75,4 +75,18 @@ killall -9 zebra
 # =============================
 # Run all the things on startup
 # =============================
-# TODO: write /etc/rc.conf
+cat >/etc/rc.conf <<EOF
+#!/bin/sh
+ifconfig_em0="DHCP"
+sshd_enable="YES"
+hostname="liza"
+
+ifconfig_em1="inet 10.0.1.3 netmask 255.255.255.0"
+cloned_interfaces="vlan6 vlan7 vlan103"
+ifconfig_vlan6="inet 10.18.51.130/26 vlan 6 vlandev em1"
+ifconfig_vlan7="inet 10.18.51.2/26 vlan 7 vlandev em1"
+ifconfig_vlan303="inet 192.168.9.3/24 vlan 303 vlandev em1"
+
+quagga_enable="YES"
+quagga_daemons="zebra ripd"
+EOF

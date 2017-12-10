@@ -73,4 +73,18 @@ killall -9 zebra
 # =============================
 # Run all the things on startup
 # =============================
-# TODO: write /etc/rc.conf
+cat >/etc/rc.conf <<EOF
+#!/bin/sh
+ifconfig_em0="DHCP"
+sshd_enable="YES"
+hostname="mary"
+
+ifconfig_em1="inet 10.0.1.1 netmask 255.255.255.0"
+cloned_interfaces="vlan5 vlan7 vlan103"
+ifconfig_vlan5="inet 10.18.51.65/26 vlan 5 vlandev em1"
+ifconfig_vlan7="inet 10.18.51.1/26 vlan 7 vlandev em1"
+ifconfig_vlan103="inet 192.168.3.3/24 vlan 103 vlandev em1"
+
+quagga_enable="YES"
+quagga_daemons="zebra ripd"
+EOF
