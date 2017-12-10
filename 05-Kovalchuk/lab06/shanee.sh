@@ -39,7 +39,6 @@ debug rip packet
 
 router rip
 version 2
-redistribute connected
 
 network vlan5
 network vlan6
