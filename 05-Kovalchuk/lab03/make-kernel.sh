@@ -141,7 +141,6 @@ device      da                          # Direct Access (disks)
 device      cd                          # CD
 device      pass                        # Passthrough device (direct ATA/SCSI access)
 device      ses                         # Enclosure Services (SES and SAF-TE)
-#device     ctl                         # CAM Target Layer
 
 # NVM Express (NVMe) support
 device      nvme                        # base NVMe driver
@@ -157,9 +156,6 @@ device      kbdmux                      # keyboard multiplexer
 device      vga                         # VGA video card driver
 options     VESA                        # Add support for VESA BIOS Extensions (VBE)
 
-# TODO: can I remove this?
-device      splash                      # Splash screen and screen saver support
-
 # syscons is the default console driver, resembling an SCO console
 device      sc
 options     SC_PIXEL_MODE               # add support for the raster text mode
@@ -168,9 +164,6 @@ options     SC_PIXEL_MODE               # add support for the raster text mode
 device      vt
 device      vt_vga
 device      vt_efifb
-
-# TODO: can I remove this?
-device      agp                         # support several AGP chipsets
 
 # PCI Ethernet NICs.
 device      em                          # Intel PRO/1000 Gigabit Ethernet Family
@@ -190,15 +183,6 @@ device      firmware                    # firmware assist module
 # Be aware of the administrative consequences of enabling this!
 # Note that 'bpf' is required for DHCP.
 device      bpf                         # Berkeley packet filter
-
-# TODO: Can I remove this?
-# VirtIO support
-device      virtio                      # Generic VirtIO bus (required)
-device      virtio_pci                  # VirtIO PCI device
-device      vtnet                       # VirtIO Ethernet device
-device      virtio_blk                  # VirtIO Block device
-device      virtio_scsi                 # VirtIO SCSI device
-device      virtio_balloon              # VirtIO Memory Balloon device
 
 # Netmap provides direct access to TX/RX rings on supported NICs
 device      netmap                      # netmap(4) support
