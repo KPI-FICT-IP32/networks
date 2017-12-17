@@ -53,7 +53,7 @@ hostname liza.anxolerd.net
 password zebra
 enable password zebra
 
-interface vlan5
+interface vlan6
   multicast
 
 interface vlan7
@@ -81,7 +81,7 @@ sshd_enable="YES"
 hostname="liza"
 
 ifconfig_em1="inet 10.0.1.3 netmask 255.255.255.0"
-cloned_interfaces="vlan6 vlan7 vlan103"
+cloned_interfaces="vlan6 vlan7 vlan303"
 ifconfig_vlan6="inet 10.18.51.130/26 vlan 6 vlandev em1"
 ifconfig_vlan7="inet 10.18.51.2/26 vlan 7 vlandev em1"
 ifconfig_vlan303="inet 192.168.9.3/24 vlan 303 vlandev em1"
