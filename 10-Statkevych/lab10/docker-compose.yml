@@ -1,0 +1,113 @@
+version: "2"
+
+services:
+  test_host_1:
+    build:
+      context: ./test_host
+    #tty: true
+    #stdin_open: true
+    hostname: mercury
+    #user: mercury
+    environment:
+      HOSTNAME: mercury
+    networks:
+      ns_servers:
+      lab1:
+        ipv4_address: 172.21.11.10
+    expose: 
+      - 25
+      - 465
+      - 587
+
+  test_host_2:
+    build:
+      context: ./test_host
+    #tty: true
+    #stdin_open: true
+    hostname: venus
+    #user: venus
+    environment:
+      HOSTNAME: venus
+    networks:
+      ns_servers:
+      lab1:
+        ipv4_address: 172.21.11.20
+    expose: 
+      - 25
+      - 465
+      - 587
+
+  host3:
+    image: alpine:latest
+    networks:
+      lab1:
+        ipv4_address: 172.21.11.30
+    command: /bin/sh
+    #stdin_open: true
+    #tty: true
+
+  host4:
+    image: alpine:latest
+    networks:
+      lab1:
+        ipv4_address: 172.21.11.40
+    command: /bin/sh
+    #stdin_open: true
+    #tty: true
+
+  dns_master:
+    build:
+      context: ./dns_master/
+    #stdin_open: true
+    #tty: true
+    command: /bin/bash
+    networks:
+      ns_servers:
+        ipv4_address: 10.18.51.2
+      lab1:
+    expose:
+      - 53
+
+  dns_slave:
+    build:
+      context: ./dns_slave/
+    #stdin_open: true
+    #tty: true
+    command: /bin/bash
+    networks:
+      ns_servers:
+        ipv4_address: 10.18.51.11
+      lab1:
+    expose:
+      - 53
+
+  mail:
+    build:
+      context: ./mail_server
+    networks:
+      ns_servers:
+      lab1:
+        ipv4_address: 172.21.11.60
+    #stdin_open: true
+    #tty: true
+    hostname: smtp_host
+    expose: 
+      - 25
+      - 465
+      - 587
+
+
+networks:
+  lab1:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.11.0/24
+  ns_servers:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.18.51.0/24
+

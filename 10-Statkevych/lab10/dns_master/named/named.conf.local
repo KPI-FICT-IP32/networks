@@ -1,0 +1,7 @@
+zone "zone10.org.ua" {
+    type master;
+    file "/etc/bind/zones/zone10.org.ua"; # zone file path
+    allow-transfer { 10.18.51.11; };         # ns2 private IP address - secondary
+    notify yes;
+    also-notify { 10.18.51.11; };
+};
