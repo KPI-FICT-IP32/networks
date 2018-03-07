@@ -1,0 +1,5 @@
+zone "zone10.org.ua" IN {
+    type slave;
+    masters { 10.18.51.2; };
+    file "/etc/bind/zones/zone10.org.ua";
+};

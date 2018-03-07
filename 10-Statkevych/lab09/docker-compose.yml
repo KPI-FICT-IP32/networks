@@ -1,0 +1,89 @@
+version: "2"
+
+services:
+  host1:
+    image: alpine:latest
+    networks:
+      lab1:
+        ipv4_address: 172.21.11.10
+    command: /bin/sh
+    stdin_open: true
+    tty: true
+
+  host2:
+    image: alpine:latest
+    networks:
+      lab1:
+        ipv4_address: 172.21.11.20
+    stdin_open: true
+    command: /bin/sh
+    tty: true
+
+  host3:
+    image: alpine:latest
+    networks:
+      lab1:
+        ipv4_address: 172.21.11.30
+    command: /bin/sh
+    stdin_open: true
+    tty: true
+
+  host4:
+    image: alpine:latest
+    networks:
+      lab1:
+        ipv4_address: 172.21.11.40
+    command: /bin/sh
+    stdin_open: true
+    tty: true
+
+  dns_master:
+    build:
+      context: ./dns_master/
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    networks:
+      ns_servers:
+        ipv4_address: 10.18.51.2
+      lab1:
+    expose:
+      - 53
+
+  dns_slave:
+    build:
+      context: ./dns_slave/
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    networks:
+      ns_servers:
+        ipv4_address: 10.18.51.11
+      lab1:
+    expose:
+      - 53
+
+  test_host:
+    build:
+      context: ./test_host
+    tty: true
+    stdin_open: true
+    networks:
+      ns_servers:
+        ipv4_address: 10.18.51.5
+      lab1:
+
+networks:
+  lab1:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.11.0/24
+  ns_servers:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.18.51.0/24
+
