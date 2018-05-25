@@ -53,19 +53,20 @@ chown_upload_mode=0666
 
 # general users
 local_enable=YES
-local_root=/var/ftp
+user_sub_token=$USER
+local_root=/var/ftp/$USER
 write_enable=YES
 local_umask=0002
 connect_from_port_20=YES
-chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
 allow_writeable_chroot=YES
-
-user_config_dir=/etc/vsftpd.user_conf.d
 
 listen=YES
 EOF
 
-mkdir -p /etc/vsftpd.user_conf.d
-for user in 'tiger' 'jaguar' ; do
-    echo "local_root=/var/ftp/${user}" > "/etc/vsftpd.user_conf.d/${user}"
-done
+
+cat > "/etc/vsftpd.chroot_list" << 'EOF'
+tiger
+jaguar
+EOF
