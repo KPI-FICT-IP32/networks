@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |vb|
+    # Customize the amount of memory on the VM:
+    vb.memory = "256"
+  end
+
+  config.vm.define "nfs_server" do |nfs_server|
+    nfs_server.vm.box = "generic/alpine37"
+    nfs_server.vm.network "private_network", ip: "10.18.51.7"
+    nfs_server.vm.provision "shell", path: "setup-nfs_server.sh"
+  end
+
+  config.vm.define "nfs_client_1" do |nfs_client_1|
+    nfs_client_1.vm.box = "generic/alpine37"
+    nfs_client_1.vm.network "private_network", ip: "10.18.51.6"
+    nfs_client_1.vm.provision "shell", path: "setup-nfs_client.sh"
+  end
+
+  config.vm.define "nfs_client_2" do |nfs_client_2|
+    nfs_client_2.vm.box = "generic/alpine37"
+    nfs_client_2.vm.network "private_network", ip: "10.18.51.5"
+    nfs_client_2.vm.provision "shell", path: "setup-nfs_client.sh"
+  end
+end
