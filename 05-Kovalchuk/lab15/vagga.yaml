@@ -1,0 +1,26 @@
+containers:
+  nginx:
+    setup:
+      - !Alpine v3.7
+      - !Install
+        - nginx
+        - openssl
+      - !EnsureDir /usr/home/http
+      - !EnsureDir /usr/web
+    volumes:
+      /usr/home/http: !BindRO /work/usr/home/http
+      /usr/web: !BindRO /work/usr/web
+      /tmp: !Tmpfs { size: 100Mi, mode: 0o1777 }
+  
+commands:
+  gen-cert: !Command
+    description: generate certificates for nginx 
+    container: nginx
+    run: |
+      echo "TODO GEN CERTS"
+
+  run: !Command
+    description: run nginx
+    container: nginx
+    run: |
+      nginx -c /work/nginx.conf
