@@ -5,22 +5,91 @@ containers:
       - !Install
         - nginx
         - openssl
+        - apache2-utils
       - !EnsureDir /usr/home/http
       - !EnsureDir /usr/web
     volumes:
       /usr/home/http: !BindRO /work/usr/home/http
       /usr/web: !BindRO /work/usr/web
       /tmp: !Tmpfs { size: 100Mi, mode: 0o1777 }
-  
+
 commands:
   gen-cert: !Command
-    description: generate certificates for nginx 
+    description: generate certificates for nginx
     container: nginx
     run: |
-      echo "TODO GEN CERTS"
+        set -x
+        mkdir -p cert
+
+        # Generate key for CA
+        openssl genrsa -passout env:CERT_PASSWORD -des3 -out cert/anxolerdCA.key 4096
+
+        # Generate root certificate
+        openssl req -x509 -new -nodes \
+            -key cert/anxolerdCA.key -passin env:CERT_PASSWORD \
+            -sha256 \
+            -days 365 \
+            -subj "$ROOT_CERT_SUBJECT" \
+            -out cert/anxolerdCA.pem
+
+        # Generate private key for site certificate
+        openssl genrsa -out cert/cert.zone05.net.key 4096
+
+        # Create a CSR (certificate signing request)
+        openssl req -new \
+            -key cert/cert.zone05.net.key \
+            -subj "$CSR_SUBJECT" \
+            -out cert/cert.zone05.net.csr
+
+        # Create a CSR config
+        cat >cert/cert.zone05.net.csr.conf << 'EOF'
+        [req]
+        default_bits = 4096
+        prompt = no
+        default_md = sha512
+        distinguished_name = dn
+
+        [dn]
+        C=UA
+        ST=Kyiv
+        L=Kyiv city
+        O=anxolerd
+        CN=*.zone05.net.
+        emailAddredd=anxolerd@outlook.com
+        EOF
+
+        # CSR config extension
+        cat >cert/cert.zone05.net.csr.ext << 'EOF'
+        authorityKeyIdentifier = keyid, issuer
+        basicConstraints = CA:FALSE
+        keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+        subjectAltName = @alt_names
+
+        [alt_names]
+        DNS.1 = *.zone05.net.
+        EOF
+
+        # Sign certificate
+        openssl x509 -req -in cert/cert.zone05.net.csr \
+            -CA cert/anxolerdCA.pem \
+            -CAkey cert/anxolerdCA.key -passin env:CERT_PASSWORD \
+            -CAcreateserial \
+            -out cert/cert.zone05.net.crt \
+            -days 30 \
+            -sha512 \
+            -extfile cert/cert.zone05.net.csr.ext
+    environ:
+        CERT_PASSWORD: my_awesome_certificate_password
+        ROOT_CERT_SUBJECT: /C=UA/ST=Kyiv/L=Kyiv city/O=anxolerd/CN=zone05.net.
+        CSR_SUBJECT: /C=UA/ST=Kyiv/L=Kyiv city/O=anxolerd/CN=*.zone05.net.
 
   run: !Command
     description: run nginx
     container: nginx
     run: |
-      nginx -c /work/nginx.conf
+      nginx -c /work/config/nginx.conf
+
+  htpasswd: !Command
+    description: run htpasswd
+    container: nginx
+    run: [htpasswd]
