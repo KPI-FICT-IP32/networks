@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "samba_server" do |samba_server|
+    samba_server.vm.box = "fedora/27-cloud-base"
+    samba_server.vm.network "private_network", ip: "10.18.51.9"
+    samba_server.vm.provision "shell", path: "setup-samba.sh"
+    samba_server.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"
+    end
+  end
+
+  config.vm.define "samba_client" do |samba_client|
+    samba_client.vm.box = "fedora/27-cloud-base"
+    samba_client.vm.network "private_network", ip: "10.18.51.10"
+    samba_client.vm.provision "shell", path: "setup-samba-client.sh"
+    samba_client.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"
+    end
+  end
+end
