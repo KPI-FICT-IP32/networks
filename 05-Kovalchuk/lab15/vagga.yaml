@@ -33,16 +33,23 @@ commands:
             -out cert/anxolerdCA.pem
 
         # Generate private key for site certificate
-        openssl genrsa -out cert/cert.zone05.net.key 4096
+        openssl genrsa -out cert/beta.zone05.net.key 4096
+        openssl genrsa -out cert/srv-05.zone05.net.key 4096
 
         # Create a CSR (certificate signing request)
         openssl req -new \
-            -key cert/cert.zone05.net.key \
-            -subj "$CSR_SUBJECT" \
-            -out cert/cert.zone05.net.csr
+            -key cert/beta.zone05.net.key \
+            -subj "$CSR_BETA_SUBJECT" \
+            -out cert/beta.zone05.net.csr
+
+        # Create a CSR (certificate signing request)
+        openssl req -new \
+            -key cert/srv-05.zone05.net.key \
+            -subj "$CSR_SRV_05_SUBJECT" \
+            -out cert/srv-05.zone05.net.csr
 
         # Create a CSR config
-        cat >cert/cert.zone05.net.csr.conf << 'EOF'
+        cat >cert/beta.zone05.net.csr.conf << 'EOF'
         [req]
         default_bits = 4096
         prompt = no
@@ -54,34 +61,72 @@ commands:
         ST=Kyiv
         L=Kyiv city
         O=anxolerd
-        CN=*.zone05.net.
+        CN=beta.zone05.net.
         emailAddredd=anxolerd@outlook.com
         EOF
 
         # CSR config extension
-        cat >cert/cert.zone05.net.csr.ext << 'EOF'
+        cat >cert/beta.zone05.net.csr.ext << 'EOF'
         authorityKeyIdentifier = keyid, issuer
         basicConstraints = CA:FALSE
         keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
         subjectAltName = @alt_names
 
         [alt_names]
-        DNS.1 = *.zone05.net.
+        DNS.1 = beta.zone05.net.
         EOF
 
+        cat >cert/srv-05.zone05.net.csr.conf << 'EOF'
+        [req]
+        default_bits = 4096
+        prompt = no
+        default_md = sha512
+        distinguished_name = dn
+
+        [dn]
+        C=UA
+        ST=Kyiv
+        L=Kyiv city
+        O=anxolerd
+        CN=srv-05.zone05.net.
+        emailAddredd=anxolerd@outlook.com
+        EOF
+
+        # CSR config extension
+        cat >cert/srv-05.zone05.net.csr.ext << 'EOF'
+        authorityKeyIdentifier = keyid, issuer
+        basicConstraints = CA:FALSE
+        keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+        subjectAltName = @alt_names
+
+        [alt_names]
+        DNS.1 = srv-05.zone05.net.
+        EOF
+ 
         # Sign certificate
-        openssl x509 -req -in cert/cert.zone05.net.csr \
+        openssl x509 -req -in cert/beta.zone05.net.csr \
             -CA cert/anxolerdCA.pem \
             -CAkey cert/anxolerdCA.key -passin env:CERT_PASSWORD \
             -CAcreateserial \
-            -out cert/cert.zone05.net.crt \
+            -out cert/beta.zone05.net.crt \
             -days 30 \
             -sha512 \
-            -extfile cert/cert.zone05.net.csr.ext
+            -extfile cert/beta.zone05.net.csr.ext
+
+        # Sign certificate
+        openssl x509 -req -in cert/srv-05.zone05.net.csr \
+            -CA cert/anxolerdCA.pem \
+            -CAkey cert/anxolerdCA.key -passin env:CERT_PASSWORD \
+            -CAcreateserial \
+            -out cert/srv-05.zone05.net.crt \
+            -days 30 \
+            -sha512 \
+            -extfile cert/srv-05.zone05.net.csr.ext
     environ:
         CERT_PASSWORD: my_awesome_certificate_password
         ROOT_CERT_SUBJECT: /C=UA/ST=Kyiv/L=Kyiv city/O=anxolerd/CN=zone05.net.
-        CSR_SUBJECT: /C=UA/ST=Kyiv/L=Kyiv city/O=anxolerd/CN=*.zone05.net.
+        CSR_BETA_SUBJECT: /C=UA/ST=Kyiv/L=Kyiv city/O=anxolerd/CN=beta.zone05.net.
+        CSR_SRV_05_SUBJECT: /C=UA/ST=Kyiv/L=Kyiv city/O=anxolerd/CN=srv-05.zone05.net.
 
   run: !Command
     description: run nginx
